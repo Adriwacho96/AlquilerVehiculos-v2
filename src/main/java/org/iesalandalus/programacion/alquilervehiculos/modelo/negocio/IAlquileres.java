@@ -10,14 +10,15 @@ import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Cliente;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Vehiculo;
 
 public interface IAlquileres {
+	public void comenzar();
+
+	public void terminar();
 
 	public List<Alquiler> get();
 
 	public List<Alquiler> get(Cliente cliente);
 
 	public List<Alquiler> get(Vehiculo vehiculo);
-
-	public int getCantidad();
 
 	public void insertar(Alquiler alquiler) throws OperationNotSupportedException;
 

@@ -1,6 +1,8 @@
-package org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.memoria;
+package org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.ficheros;
 
+import java.io.File;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,17 +13,78 @@ import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Alquiler;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Cliente;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Vehiculo;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.IAlquileres;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class Alquileres implements IAlquileres {
-	List<Alquiler> coleccionAlquileres;
 
-	public Alquileres() {
+	private static final File FICHERO_ALQUILERES = new File(
+			String.format("%s%s%s", "datos", File.separator, "alquileres.xml"));
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final String RAIZ = "alquileres";
+	private static Alquileres instancia;
+	private static final String ALQUILER = "alquiler";
+	private static final String CLIENTE = "cliente";
+	private static final String VEHICULO = "vehiculo";
+	private static final String FECHA_ALQUILER = "fechaAlquiler";
+	private static final String FECHA_DEVOLUCION = "fechaDevolucion";
+	private List<Alquiler> coleccionAlquileres;
+
+	private Alquileres() {
 		coleccionAlquileres = new ArrayList<>();
 	}
 
-	@Override
-	public List<Alquiler> get() {
-		return coleccionAlquileres;
+	static Alquileres getInstancia() {
+		if (instancia == null) {
+			instancia = new Alquileres();
+		}
+		return instancia;
+	}
+
+	private void leerDom(Document documentoXml) {
+		NodeList alquileres = documentoXml.getElementsByTagName(ALQUILER);
+		for (int i = 0; i < alquileres.getLength(); i++) {
+			Node nAlquiler = alquileres.item(i);
+			if (nAlquiler.getNodeType() == Node.ELEMENT_NODE) {
+				try {
+					insertar(getAlquiler((Element)alquileres));
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+		}
+	}
+
+	private Alquiler getAlquiler(Element elemento) throws OperationNotSupportedException {
+		String fechaAlquiler = elemento.getAttribute(FECHA_ALQUILER);
+		LocalDate fechaA = LocalDate.parse(fechaAlquiler, FORMATO_FECHA);
+		
+		String fechaDevolucion = elemento.getAttribute(FECHA_DEVOLUCION);
+		LocalDate fechaD = LocalDate.parse(fechaDevolucion, FORMATO_FECHA);
+		
+		
+		String cliente = elemento.getAttribute(CLIENTE);
+		Cliente clienteB =Clientes.getInstancia().buscar(Cliente.getClienteConDni(cliente));
+		
+		String vehiculo = elemento.getAttribute(VEHICULO);
+		Vehiculo vehiculoB = Vehiculos.getInstancia().buscar(Vehiculo.getVehiculoConMatricula(vehiculo));
+		
+
+		
+		if(clienteB == null) {
+			
+		}
+		if(vehiculoB == null) {
+			
+		}
+		Alquiler alquiler = new Alquiler(clienteB,vehiculoB,fechaA);
+		if(elemento.hasAttribute(FECHA_DEVOLUCION)) {
+			alquiler.devolver(fechaD);
+		}
+		return alquiler;
+
 	}
 
 	@Override
@@ -46,11 +109,7 @@ public class Alquileres implements IAlquileres {
 		return aVehiculo;
 	}
 
-	@Override
-	public int getCantidad() {
-		return coleccionAlquileres.size();
-	}
-
+	
 	@Override
 	public void insertar(Alquiler alquiler) throws OperationNotSupportedException {
 		if (alquiler == null) {
@@ -167,6 +226,24 @@ public class Alquileres implements IAlquileres {
 		} else {
 			coleccionAlquileres.remove(alquiler);
 		}
+	}
+
+	@Override
+	public void comenzar() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void terminar() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<Alquiler> get() {
+		
+		return new ArrayList<>(coleccionAlquileres);
 	}
 
 }

@@ -7,17 +7,18 @@ import javax.naming.OperationNotSupportedException;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Cliente;
 
 public interface IClientes {
+	 void comenzar();
 
-	public List<Cliente> get();
+	void terminar();
 
-	public int getCantidad();
+	List<Cliente> get();
 
-	public void insertar(Cliente cliente) throws OperationNotSupportedException;
+	void insertar(Cliente cliente) throws OperationNotSupportedException;
 
-	public Cliente buscar(Cliente cliente);
+	 Cliente buscar(Cliente cliente);
 
-	public void borrar(Cliente cliente) throws OperationNotSupportedException;
+	 void borrar(Cliente cliente) throws OperationNotSupportedException;
 
-	public void modificar(Cliente cliente, String nombre, String telefono) throws OperationNotSupportedException;
+	void modificar(Cliente cliente, String nombre, String telefono) throws OperationNotSupportedException;
 
 }

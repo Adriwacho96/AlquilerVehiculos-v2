@@ -2,10 +2,10 @@ package org.iesalandalus.programacion.alquilervehiculos.modelo.negocio;
 
 public interface IFuenteDatos {
 
-	IClientes crearClientes();
+	public IClientes crearClientes();
 
-	IVehiculos crearVehiculos();
+	public IVehiculos crearVehiculos();
 
-	IAlquileres crearAlquileres();
+	public IAlquileres crearAlquileres();
 
 }
